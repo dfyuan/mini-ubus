@@ -1,0 +1,102 @@
+#!/usr/bin/python
+import os
+import time
+import shutil
+import stat
+import sys
+import re
+import subprocess
+import repo_utils
+
+repo_manifest = [
+				]
+
+silan_build_dir = [
+				'services/env_init',
+				'services/ethernet_monitor_service',
+				'services/haier_man_service',
+				'services/input_mode_service',
+				'services/misc_man_service',
+				'services/net_comm_service',
+				'services/sona_ctrl_service',
+				'services/soundbar_man_service',
+				'services/vol_man_service',
+				'services/wlan_monitor_service',
+				'services/alc1312_init',
+				'services/battery_mon_service',
+				'services/power_man_service',
+				'services/input_device_service',
+				'services/workmode_man_service',
+				'services/sam5704_comm_service',
+				'services/hid_comm_service',
+			]
+
+montage_build_dir = [
+				'services/env_init',
+				'services/montage_monitor',
+				'services/net_comm_service',
+				'services/sona_ctrl_service',
+				'services/input_device_service',
+				'services/vol_man_service',
+				'services/bgm_man_service',
+				'services/uuid_man_service',
+			]
+
+x86_build_dir = [
+				'libs_src/event_mngr_utils',
+				'libs_src/sys_utils',
+				'libs_src/logd_utils',
+				'services/event_mngr',
+				'test/event_pub_client',
+				'test/event_sub_client',
+			]
+
+build_dir_dic = {
+	"silan"     : silan_build_dir,
+	"montage"   : montage_build_dir,
+	"x86"		: x86_build_dir
+}
+
+repo_url_dic = {
+	'sona' : "ssh://git@192.168.6.1:29418/zygote_prj/"
+}
+
+command_dic = {
+	"status"     : repo_utils.repo_status,
+	"branch"     : repo_utils.repo_branch,
+	"init"       : repo_utils.repo_init,
+	"push"       : repo_utils.repo_push,
+	"sync"       : repo_utils.repo_sync,
+	"build"      : repo_utils.repo_build,
+	"clean"      : repo_utils.repo_clean,
+	"checkout"   : repo_utils.repo_checkout,
+	"forall"     : repo_utils.repo_forall,
+	"remote"     : repo_utils.repo_remote
+}
+
+try:
+	command_handler = command_dic[sys.argv[1]]
+except KeyError:
+	print inred("wrong command :" + sys.argv[1])
+	exit()
+
+if (sys.argv[1] == 'status' or sys.argv[1] == 'branch'):
+	command_handler(repo_manifest)
+elif (sys.argv[1] == 'build'):
+	command_handler(build_dir_dic[sys.argv[2]], sys.argv[2], sys.argv[3])
+elif (sys.argv[1] == 'clean'):
+	command_handler(build_dir_dic[sys.argv[2]])
+elif (sys.argv[1] == 'push'):
+	command_handler(sys.argv[2], repo_manifest)
+elif (sys.argv[1] == 'init'):
+	command_handler(repo_url_dic[sys.argv[2]], repo_manifest)
+elif (sys.argv[1] == 'sync'):
+	command_handler(sys.argv[2], repo_manifest)
+elif (sys.argv[1] == 'checkout'):
+	command_handler(sys.argv[2], repo_manifest)
+elif (sys.argv[1] == 'forall'):
+	command_handler(sys.argv[2], repo_manifest)
+elif (sys.argv[1] == 'remote'):
+	command_handler(sys.argv[2], sys.argv[3], repo_manifest)
+else:
+	print "Command not supported"

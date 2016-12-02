@@ -1,0 +1,1 @@
+include ../../build/build_shared_lib.mk

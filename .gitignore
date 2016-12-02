@@ -1,0 +1,5 @@
+!.gitignore
+*event_mngr
+*event_sub_client
+*event_pub_client
+*.pyc
